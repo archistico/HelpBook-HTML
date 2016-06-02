@@ -183,49 +183,28 @@
 
 
 
-          <div class="col-md-6">
+          <div class="col-md-8">
 
               <div class="box">
                   <div class="box-header">
-                      <h3 class="box-title">Ultime distribuzioni</h3>
+                      <h3 class="box-title">Lista movimenti</h3>
                   </div>
                   <!-- /.box-header -->
                   <div class="box-body no-padding">
                       <table class="table table-striped">
                           <tr>
-                              <th style="width: 95px">Codice</th>
+                              <th style="width: 110px">Codice</th>
                               <th style="width: 100px">Data</th>
+                              <th style="width: 180px">Tipologia</th>
+                              <th style="width: 130px">Causale</th>
                               <th>Cliente</th>
-                              <th style="width: 95px">Importo</th>
                               <th style="width: 70px">Pagata</th>
-                              <th style="width: 70px"></th>
+                              <th style="width: 50px"></th>
                           </tr>
-                          <tr>
-                              <td><span class="badge bg-red">2016-FE-001</span></td>
-                              <td>01/01/2016</td>
-                              <td>Ditta Pallino</td>
-                              <td>€ 130,00</td>
-                              <td><i class="fa fa-fw fa-circle" style="color:red"></i></td>
-                              <td>
-                                  <div class='btn-group'>
-                                    <button type="button" class="btn btn-xs btn-flat" style="margin-right: 5px"><i class="fa fa-eye"></i></button>
-                                    <button type="button" class="btn btn-xs btn-flat"><i class="fa fa-pencil"></i></button>
-                                  </div>
-                              </td>
-                          </tr>
-                          <tr>
-                              <td><span class="badge bg-red">2016-FE-001</span></td>
-                              <td>01/01/2016</td>
-                              <td>Ditta Pallino</td>
-                              <td>€ 130,00</td>
-                              <td><i class="fa fa-fw fa-circle" style="color:green"></i></td>
-                              <td>
-                                  <div class='btn-group'>
-                                    <button type="button" class="btn btn-xs btn-flat" style="margin-right: 5px"><i class="fa fa-eye"></i></button>
-                                    <button type="button" class="btn btn-xs btn-flat"><i class="fa fa-pencil"></i></button>
-                                  </div>
-                              </td>
-                          </tr>
+                          <?php
+                          include 'php/movimenti.php';
+                            movimentiListaTabella();
+                          ?>
                       </table>
                   </div>
                   <!-- /.box-body -->
@@ -233,7 +212,7 @@
               <!-- /.box -->
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-4">
 
              <div class="box">
                   <div class="box-header">

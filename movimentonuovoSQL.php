@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title> HelpBook | MOVIMENTO - NUOVO</title>
+        <title> HelpBook | MOVIMENTO - AGGIUNGI AL DATABASE</title>
         <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <!-- Bootstrap 3.3.6 -->
@@ -122,82 +122,181 @@
                 <!-- Main content -->
                 <section class="content">
                     
-                    <form role="form" name="movimentoForm" action="movimentonuovoSQL.php" method="get">
+     
                     
-                    <!-- **********************************DATI GENERALI****************************** -->
+                    
+                    
+                    <!-- **********************************CONTENUTO****************************** -->
                     <div class="box box-primary">
                         <div class="box-header with-border">
-                            <h3 class="box-title">DATI GENERALI</h3>
+                            <h3 class="box-title">INSERIMENTO DATABASE</h3>
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Cliente</label>
-                                        <select class="form-control select2" style="width: 100%;" name='cliente' required>
-                                            <?php
-                                            include 'php/soggetti.php';
-                                            soggettiSelect();
-                                            ?>
-                                        </select>
-                                    </div>
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <?php
+                                    
+                                    // RECUPERO DATI E AGGIUNGO
+                                    define('CHARSET', 'UTF-8');
+                                    define('REPLACE_FLAGS', ENT_COMPAT | ENT_XHTML);
+
+                                    $errors = array();
+                                    
+                                    if (empty($_GET['cliente'])) {
+                                        $errors['cliente'] = 'ID cliente non passato';
+                                    } else {
+                                        $cliente = $_GET['cliente'];
+                                    }
+
+                                    if (empty($_GET['dataEmissione'])) {
+                                        $errors['dataEmissione'] = 'dataEmissione non passato';
+                                    } else {
+                                        $dataEmissione = DateTime::createFromFormat('d/m/Y', $_GET['dataEmissione']);
+                                    }
+
+                                    if (empty($_GET['tipologia'])) {
+                                        $errors['tipologia'] = 'tipologia non passato';
+                                    } else {
+                                        $tipologia = $_GET['tipologia'];
+                                    }
+
+                                    if (empty($_GET['causale'])) {
+                                        $errors['causale'] = 'causale non passato';
+                                    } else {
+                                        $causale = $_GET['causale'];
+                                    }
+
+                                    if (!isset($_GET['riferimento'])) {
+                                        $riferimento = '-';
+                                    } else {
+                                        $riferimento = $_GET['riferimento'];
+                                    }
+
+                                    if (!isset($_GET['spedizione'])) {
+                                        $errors['spedizione'] = 'spedizione non passato';
+                                    } else {
+                                        $spedizione = $_GET['spedizione'];
+                                    }
+
+                                    if (!isset($_GET['spedizionesconto'])) {
+                                        $errors['spedizionesconto'] = 'spedizionesconto non passato';
+                                    } else {
+                                        $spedizionesconto = $_GET['spedizionesconto'];
+                                    }
+
+                                    if (empty($_GET['trasporto'])) {
+                                        $errors['trasporto'] = 'trasporto non passato';
+                                    } else {
+                                        $trasporto = $_GET['trasporto'];
+                                    }
+
+                                    if (empty($_GET['aspetto'])) {
+                                        $errors['aspetto'] = 'aspetto non passato';
+                                    } else {
+                                        $aspetto = $_GET['aspetto'];
+                                    }
+
+                                    if (empty($_GET['modalita'])) {
+                                        $errors['modalita'] = 'modalita non passato';
+                                    } else {
+                                        $modalita = $_GET['modalita'];
+                                    }
+
+                                    if (empty($_GET['dataEntro'])) {
+                                        $errors['dataEntro'] = 'dataEntro non passato';
+                                    } else {
+                                        $dataEntro = DateTime::createFromFormat('d/m/Y', $_GET['dataEntro']);
+                                    }
+
+                                    if (!isset($_GET['pagato'])) {
+                                        $errors['pagato'] = 'pagato non passato';
+                                    } else {
+                                        $pagato = $_GET['pagato'];
+                                    }
+
+                                    if (empty($_GET['dataPagamento'])) {
+                                        //
+                                    } else {
+                                        $dataPagamento = DateTime::createFromFormat('d/m/Y', $_GET['dataPagamento']);
+                                    }
+
+                                    if (!isset($_GET['note'])) {
+                                        $note = '-';
+                                    } else {
+                                        $note = $_GET['note'];
+                                    }
+
+                                    if (empty($errors)) {
+                                        try {
+                                            include 'php/config.php';
+                                            
+                                            //$dbhost = "localhost";
+                                            //$dbname = "helpbookdb";
+                                            //$dbuser = "root";
+                                            //$dbpswd = "";
+
+                                            $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
+                                            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+                                            $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+                                            $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES UTF8');
+
+                                            date_default_timezone_set('Europe/Rome');
+
+                                            $result = $db->query("SELECT MAX(numero) AS ultimo FROM movimenti WHERE anno = '" . $dataEmissione->format('Y') . "' AND fktipologia = " . $tipologia . "");
+                                            $row = $result->fetch(PDO::FETCH_ASSOC);
+                                            $numero = $row['ultimo'] + 1;
+
+                                            if (!isset($dataPagamento)) {
+                                                $db->exec("INSERT INTO helpbookdb.movimenti (idmovimento, fktipologia, fkcausale, numero, anno, riferimento, fksoggetto, movimentodata, pagamentoentro, pagata, fkpagamentotipologia, datapagamento, spedizionecosto, spedizionesconto, fkaspetto, fktrasporto, note, cancellato) VALUES (NULL, '" . $tipologia . "', '" . $causale . "', '" . $numero . "', '" . $dataEmissione->format('Y') . "', '" . $riferimento . "', '" . $cliente . "', '" . $dataEmissione->format('Y-m-d') . "', '" . $dataEntro->format('Y-m-d') . "', '" . $pagato . "', '" . $modalita . "', NULL, '" . $spedizione . "', '" . $spedizionesconto . "', '" . $aspetto . "', '" . $trasporto . "', '" . $note . "', '0');");
+                                            } else {
+                                                $db->exec("INSERT INTO helpbookdb.movimenti (idmovimento, fktipologia, fkcausale, numero, anno, riferimento, fksoggetto, movimentodata, pagamentoentro, pagata, fkpagamentotipologia, datapagamento, spedizionecosto, spedizionesconto, fkaspetto, fktrasporto, note, cancellato) VALUES (NULL, '" . $tipologia . "', '" . $causale . "', '" . $numero . "', '" . $dataEmissione->format('Y') . "', '" . $riferimento . "', '" . $cliente . "', '" . $dataEmissione->format('Y-m-d') . "', '" . $dataEntro->format('Y-m-d') . "', '" . $pagato . "', '" . $modalita . "', '" . $dataPagamento->format('Y-m-d') . "', '" . $spedizione . "', '" . $spedizionesconto . "', '" . $aspetto . "', '" . $trasporto . "', '" . $note . "', '0');");
+                                            }
+
+
+
+                                            // chiude il database
+                                            $db = NULL;
+                                        } catch (PDOException $e) {
+                                            $errors['database'] = "Errore inserimento nel database";
+                                        }
+                                    }
+
+                                    if (!empty($errors)) {
+                                        echo "<div class='alert alert-danger alert-dismissible'><h4><i class='icon fa fa-ban'></i> ATTENZIONE!</h4>Ci sono degli errori</div>";
+                                    } else {
+                                        echo "<div class='alert alert-success alert-dismissible'><h4><i class='icon fa fa-check'></i> OK!</h4>Inserimento riuscito</div>";
+                                    }
+
+                                    ?>
+
+
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
                                 </div>
                                 <!-- /.col -->
 
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Data movimento</label>
-                                        <div class="input-group date">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <input type="text" class="form-control pull-right" id="datepicker1" name='dataEmissione' required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                            <!-- /.row -->
-
-
-
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Tipologia</label>
-                                        <select class="form-control select2" style="width: 100%;" name='tipologia' required>
-                                            <?php
-                                            include 'php/movimentitipologia.php';
-                                            movimentiTipologiaSelect();
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Causale</label>
-                                        <select class="form-control select2" style="width: 100%;" name='causale' required>
-                                            <?php
-                                            include 'php/movimenticausale.php';
-                                            movimentiCausaleSelect();
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                            <!-- /.row -->
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Riferimento <em>(opzionale)</em></label>
-                                        <input type="text" class="form-control" placeholder="Riferimento" name='riferimento'>
-                                    </div>
+                                    
                                 </div>
                                 <!-- /.col -->
                             </div>
@@ -208,173 +307,6 @@
 
                     </div>
                     <!-- /.box -->
-
-                    
-                    
-                    
-                    
-                    <!-- ********************SPEDIZIONE************************* -->
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">SPEDIZIONE</h3>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Spese di spedizione</label>
-                                        <input type="number" min="0" max="1000" step="0.01" class="form-control" placeholder="Spese spedizione" value="0" name='spedizione' required>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Sconto spedizione (%)</label>
-                                        <input type="number" min="0" max="100" step="0.01" class="form-control" placeholder="Sconto spedizione" value='0' name='spedizionesconto' required>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                            <!-- /.row -->
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Trasporto</label>
-                                        <select class="form-control select2" style="width: 100%;" name='trasporto' required>
-                                            <?php
-                                            include 'php/movimentitrasporto.php';
-                                            movimentiTrasportoSelect();
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Aspetto</label>
-                                        <select class="form-control select2" style="width: 100%;" name='aspetto' required>
-                                            <?php
-                                            include 'php/movimentiaspetto.php';
-                                            movimentiAspettoSelect();
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                            <!-- /.row -->
-                            
-
-                        </div>
-                        <!-- /.box-body -->
-
-                    </div>
-                    <!-- /.box -->
-
-
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <!-- **********************************PAGAMENTO****************************** -->
-                    <div class="box box-primary">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">PAGAMENTO</h3>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Cliente</label>
-                                        <select class="form-control select2" style="width: 100%;"  name='modalita' required>
-                                            <?php
-                                            include 'php/pagamentitipologia.php';
-                                            pagamentiTipologiaSelect();
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Da pagare entro</label>
-                                        <div class="input-group date">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <input type="text" class="form-control pull-right" id="datepicker2" name='dataEntro' required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                            <!-- /.row -->
-
-
-
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Pagato</label>
-                                        <select class="form-control select2" style="width: 100%;" name='pagato' required>
-                                            <option value="1">Sì</option>
-                                            <option value="0">No</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Data di effettivo pagamento</label>
-                                        <div class="input-group date">
-                                            <div class="input-group-addon">
-                                                <i class="fa fa-calendar"></i>
-                                            </div>
-                                            <input type="text" class="form-control pull-right" id="datepicker3"  name='dataPagamento'>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                            <!-- /.row -->
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Note <em>(opzionale)</em></label>
-                                        <input type="text" class="form-control" placeholder="Note" name='note'>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                            <!-- /.row -->
-
-                        </div>
-                        <!-- /.box-body -->
-
-                    </div>
-                    <!-- /.box -->
-
-                    <div class="form-group row m-t-md">
-                        <div class="col-sm-12">
-                            <button type="submit" class="btn btn-block btn-primary btn-lg">INSERISCI</button>
-                        </div>
-                    </div>
-
-                    </form>
-                    <!-- /.form -->
-
                     
                     
 

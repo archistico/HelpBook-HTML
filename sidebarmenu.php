@@ -12,6 +12,7 @@
         </a>
         <ul class="treeview-menu">
             <li><a href="movimentonuovo.php"><i class="fa fa-circle-o"></i> Nuovo movimento</a></li>
+            <li><a href="movimentilista.php"><i class="fa fa-circle-o"></i> Lista movimenti</a></li>
         </ul>
     </li>
 </ul>

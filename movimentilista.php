@@ -101,8 +101,8 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        Dashboard
-        <small>Control panel</small>
+        MOVIMENTI
+        <small>LISTA</small>
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -131,37 +131,18 @@
                   <div class="box-body no-padding">
                       <table class="table table-striped">
                           <tr>
-                              <th style="width: 95px">Codice</th>
+                              <th style="width: 110px">Codice</th>
                               <th style="width: 100px">Data</th>
+                              <th style="width: 180px">Tipologia</th>
+                              <th style="width: 130px">Causale</th>
                               <th>Cliente</th>
-                              <th style="width: 95px">Importo</th>
                               <th style="width: 70px">Pagata</th>
                               <th style="width: 50px"></th>
                           </tr>
-                          <tr>
-                              <td><span class="badge bg-red">2016-FE-001</span></td>
-                              <td>01/01/2016</td>
-                              <td>Ditta Pallino</td>
-                              <td>€ 130,00</td>
-                              <td><i class="fa fa-fw fa-circle" style="color:red"></i></td>
-                              <td>
-                                  <div class='btn-group'>
-                                    <button type="button" class="btn btn-xs btn-flat"><i class="fa fa-plus"></i></button>
-                                  </div>
-                              </td>
-                          </tr>
-                          <tr>
-                              <td><span class="badge bg-red">2016-FE-001</span></td>
-                              <td>01/01/2016</td>
-                              <td>Ditta Pallino</td>
-                              <td>€ 130,00</td>
-                              <td><i class="fa fa-fw fa-circle" style="color:green"></i></td>
-                              <td>
-                                  <div class='btn-group'>
-                                    <button type="button" class="btn btn-xs btn-flat"><i class="fa fa-plus"></i></button>
-                                  </div>
-                              </td>
-                          </tr>
+                          <?php
+                          include 'php/movimenti.php';
+                            movimentiListaTabella();
+                          ?>
                       </table>
                   </div>
                   <!-- /.box-body -->

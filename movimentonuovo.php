@@ -155,6 +155,38 @@
             <!-- /.col -->
           </div>
           <!-- /.row -->
+          
+          
+          
+          
+          <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Tipologia</label>
+                    <select class="form-control select2" style="width: 100%;">
+                        <?php
+                        include 'php/movimentitipologia.php';
+                        movimentiTipologiaSelect();
+                        ?>
+                    </select>
+                </div>
+            </div>
+            <!-- /.col -->
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                <label>Causale</label>
+                <select class="form-control select2" style="width: 100%;">
+                  <option selected="selected">Elettra</option>
+                  <option>Emilie</option>
+                </select>
+              </div>
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+          
+          
         </div>
         <!-- /.box-body -->
         

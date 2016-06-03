@@ -100,13 +100,10 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
 
-
-
+                <?php
+                include 'php/utilita.php';
+                ?>
                 
-                
-                
-                
-
                 <?php
                 // RECUPERO DATI E AGGIUNGO
                 define('CHARSET', 'UTF-8');
@@ -321,16 +318,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>100</td>
-                                        <td>STORIA ELETTORALE DELLA VALLE D'AOSTA</td>
-                                        <td>978-88-97192-64-0</td>
-                                        <td>&euro; 999,99</td>
-                                        <td>100,00 %</td>
-                                        <td>&euro; 999,99</td>
-                                        <td>&euro; 9999,99</td>
-                                        <td><div class = 'btn-group'><a class='btn btn-xs btn-danger' href='' role='button'><i class = 'fa fa-remove'></i></a></div></td>
-                                    </tr>
+                                    <?php
+                                        include 'php/movimentidettaglio.php';
+                                        movimentiDettaglioListaTabella($idmovimento);
+                                        ?>
                                 </tbody>
                             </table>
                         </div>

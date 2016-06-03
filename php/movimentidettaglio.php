@@ -15,13 +15,13 @@ function movimentiDettaglioListaTabella($idmovimento) {
             print "<td>".$row['quantita']."</td>";
             print "<td>". $row['casaeditrice']." - ".convertiStringaToHTML($row['titolo']) . " (".$row['librotipologia'].")</td>";
             print "<td>".$row['isbn']."</td>";
-            print "<td>&euro; ".$row['prezzo']."</td>";
-            print "<td>".$row['sconto']." %</td>";
+            print "<td>&euro; ".number_format($row['prezzo'], 2)."</td>";
+            print "<td>".number_format($row['sconto'],2)." %</td>";
             $prezzoscontato = $row['prezzo'] *(1 - $row['sconto']/100);
-            print "<td>&euro;".$prezzoscontato."</td>";
+            print "<td>&euro;".number_format($prezzoscontato, 2)."</td>";
             $subtotale = $prezzoscontato * $row['quantita'];
-            print "<td>&euro;".$subtotale."</td>";
-            print "<td><div class = 'btn-group'><a class='btn btn-xs btn-danger' href='' role='button'><i class = 'fa fa-remove'></i></a></div></td>";
+            print "<td>&euro;".number_format($subtotale, 2)."</td>";
+            print "<td><div class = 'btn-group'><a class='btn btn-xs btn-danger' href='movimentovisualizza.php?idmovimento=".$idmovimento."&idmovimentodettaglio=".$row['idmovimentodettaglio']."' role='button'><i class = 'fa fa-remove'></i></a></div></td>";
             print "</tr>";
         }
         // chiude il database

@@ -23,7 +23,7 @@ function movimentiListaTabella() {
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
         $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES UTF8');
 
-        $result = $db->query('SELECT movimenti.numero, movimenti.anno, movimenti.movimentodata, movimenti.pagata, soggetti.denominazione, soggetti.comune, movimentitipologia.codice, movimentitipologia.movimentotipologia, movimenticausale.movimentocausale, pagamentitipologia.pagamentotipologia FROM movimenti INNER JOIN movimentitipologia ON movimenti.fktipologia=movimentitipologia.idmovimentotipologia INNER JOIN movimentiaspetto ON movimenti.fkaspetto=movimentiaspetto.idmovimentoaspetto INNER JOIN movimentitrasporto ON movimenti.fktrasporto=movimentitrasporto.idmovimentotrasporto INNER JOIN soggetti ON movimenti.fksoggetto=soggetti.idsoggetto INNER JOIN pagamentitipologia ON movimenti.fkpagamentotipologia=pagamentitipologia.idpagamentotipologia INNER JOIN movimenticausale ON movimenti.fkcausale=movimenticausale.idmovimentocausale WHERE movimenti.cancellato=0 ORDER BY movimenti.anno DESC, movimenti.fktipologia DESC, movimenti.numero DESC');
+        $result = $db->query('SELECT movimenti.idmovimento, movimenti.numero, movimenti.anno, movimenti.movimentodata, movimenti.pagata, soggetti.denominazione, soggetti.comune, movimentitipologia.codice, movimentitipologia.movimentotipologia, movimenticausale.movimentocausale, pagamentitipologia.pagamentotipologia FROM movimenti INNER JOIN movimentitipologia ON movimenti.fktipologia=movimentitipologia.idmovimentotipologia INNER JOIN movimentiaspetto ON movimenti.fkaspetto=movimentiaspetto.idmovimentoaspetto INNER JOIN movimentitrasporto ON movimenti.fktrasporto=movimentitrasporto.idmovimentotrasporto INNER JOIN soggetti ON movimenti.fksoggetto=soggetti.idsoggetto INNER JOIN pagamentitipologia ON movimenti.fkpagamentotipologia=pagamentitipologia.idpagamentotipologia INNER JOIN movimenticausale ON movimenti.fkcausale=movimenticausale.idmovimentocausale WHERE movimenti.cancellato=0 ORDER BY movimenti.anno DESC, movimenti.fktipologia DESC, movimenti.numero DESC');
         foreach ($result as $row) {
             $row = get_object_vars($row);
             print "<tr>";
@@ -65,7 +65,8 @@ function movimentiListaTabella() {
             } else {
                 print "<td><i class = 'fa fa-fw fa-circle' style = 'color:red'></i></td>";
             }
-            print "<td><div class = 'btn-group'><button type = 'button' class = 'btn btn-xs btn-flat'><i class = 'fa fa-plus'></i></button></div></td>";
+                        
+            print "<td><div class = 'btn-group'><a class='btn btn-xs btn-info' href='movimentovisualizza.php?idmovimento=".$row['idmovimento']."' role='button' style='margin-right: 5px'><i class = 'fa fa-eye'></i></a><a class='btn btn-xs btn-danger' href='movimentocancella.php?idmovimento=".$row['idmovimento']."' role='button'><i class = 'fa fa-remove'></i></a></div></td>";
             print "</tr>";
         }
         // chiude il database

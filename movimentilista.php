@@ -137,7 +137,7 @@
                               <th style="width: 130px">Causale</th>
                               <th>Cliente</th>
                               <th style="width: 70px">Pagata</th>
-                              <th style="width: 50px"></th>
+                              <th style="width: 80px"></th>
                           </tr>
                           <?php
                           include 'php/movimenti.php';
@@ -149,10 +149,6 @@
               </div>
               <!-- /.box -->
           </div>
-
-          
-
-
 
 
 

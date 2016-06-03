@@ -407,7 +407,7 @@
                     <div class="row">
                         <!-- accepted payments column -->
                         <div class="col-xs-8">
-                            <p class="lead">Pagamento:</p>
+                            <p class="lead">Altri dati:</p>
 
 
                             <p class="text-muted well well-sm no-shadow" style="margin-top: 10px;">
@@ -417,11 +417,20 @@
                             <p class="text-muted well well-sm no-shadow" style="margin-top: 10px;">
                                 * Riferimenti di legge IVA ASSOLTA DALL'EDITORE ART. 74 DPR 633/72
                             </p>
+                            
+                            <?php 
+                                if($mov_pagato) {
+                                    print "<div class='callout callout-success' style='margin-bottom: 0!important;'><h4><i class='fa fa-check'></i> Pagato</h4></div>";
+                                } else {
+                                    print "<div class='callout callout-danger' style='margin-bottom: 0!important;'><h4><i class='fa fa-warning'></i> Non pagato</h4></div>";
+                                }
+                            ?>
+                            <br>
                         </div>
                         <!-- /.col -->
                         
                         <div class="col-xs-4">
-                            <p class="lead">Da pagare entro: 01/01/2016</p>
+                            <p class="lead">Da pagare entro: <?php echo $mov_dataentro_formattata; ?></p>
 
                             <div class="table-responsive">
                                 <table class="table">

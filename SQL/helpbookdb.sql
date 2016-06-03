@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Giu 03, 2016 alle 16:32
+-- Generation Time: Giu 03, 2016 alle 20:34
 -- Versione del server: 5.6.15-log
 -- PHP Version: 5.5.8
 
@@ -555,7 +555,7 @@ CREATE TABLE IF NOT EXISTS `movimentidettaglio` (
   PRIMARY KEY (`idmovimentodettaglio`),
   KEY `idmovimento` (`fkmovimento`),
   KEY `idlibro` (`fklibro`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=22 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=30 ;
 
 --
 -- Dump dei dati per la tabella `movimentidettaglio`
@@ -566,7 +566,11 @@ INSERT INTO `movimentidettaglio` (`idmovimentodettaglio`, `fkmovimento`, `fklibr
 (16, 5, 247, 5, 30, 0),
 (17, 2, 28, 5, 30, 0),
 (20, 2, 21, 1, 10, 0),
-(21, 3, 149, 5, 0, 0);
+(21, 3, 149, 5, 0, 0),
+(22, 6, 100, 5, 0, 0),
+(26, 6, 216, 5, 45, 0),
+(27, 7, 1, 1, 100, 0),
+(29, 4, 141, 5, 0, 0);
 
 -- --------------------------------------------------------
 

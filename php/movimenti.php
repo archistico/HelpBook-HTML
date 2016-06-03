@@ -65,7 +65,7 @@ function movimentiListaTabella() {
                 print "<td><i class = 'fa fa-fw fa-circle' style = 'color:red'></i></td>";
             }
                         
-            print "<td><div class = 'btn-group'><a class='btn btn-xs btn-info' href='movimentovisualizza.php?idmovimento=".$row['idmovimento']."' role='button' style='margin-right: 5px'><i class = 'fa fa-eye'></i></a><a class='btn btn-xs btn-danger' href='movimentocancella.php?idmovimento=".$row['idmovimento']."' role='button'><i class = 'fa fa-remove'></i></a></div></td>";
+            print "<td><a class='btn btn-xs btn-info' href='movimentovisualizza.php?idmovimento=".$row['idmovimento']."' role='button' style='margin-right: 5px'><i class = 'fa fa-eye'></i></a><a class='btn btn-xs btn-danger' href='movimentocancella.php?idmovimento=".$row['idmovimento']."' role='button'><i class = 'fa fa-remove'></i></a></td>";
             print "</tr>";
         }
         // chiude il database
@@ -86,6 +86,7 @@ function movimentoDettaglioImportoTotaleScontoIva($idmovimento) {
         
         $totale = 0;
         $totalesconto = 0;
+        $totaleiva = 0;
         
         $result = $db->query('SELECT libri.prezzo, movimentidettaglio.quantita, movimentidettaglio.sconto FROM movimentidettaglio INNER JOIN libri ON movimentidettaglio.fklibro = libri.idlibro WHERE libri.cancellato = 0 && movimentidettaglio.fkmovimento='.$idmovimento);
         foreach ($result as $row) {
@@ -106,7 +107,7 @@ function movimentoDettaglioImportoTotaleScontoIva($idmovimento) {
         // chiude il database
         $db = NULL;
         // ritorna il valore
-        return array(number_format($totale, 2), number_format($totalesconto, 2));
+        return array(number_format($totale, 2), number_format($totalesconto, 2), number_format($totaleiva, 2));
         
     } catch (PDOException $e) {
         throw new PDOException("Error  : " . $e->getMessage());

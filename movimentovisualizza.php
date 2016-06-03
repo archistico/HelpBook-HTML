@@ -308,8 +308,8 @@
                             Destinatario:
                             <h2><?php echo $mov_denominazione; ?></h2>
                             <address>
-                                <?php echo $mov_indirizzo; ?><br>
-                                <?php echo $mov_cap. " ". $mov_comune; ?><br>
+                                <?php echo convertiStringaToHTML($mov_indirizzo); ?><br>
+                                <?php echo $mov_cap. " ". convertiStringaToHTML($mov_comune); ?><br>
                                 Tel: <?php echo $mov_telefono; ?><br>
                                 Email: <?php echo $mov_email; ?><br>
                                 P.IVA: <?php echo $mov_piva; ?><br>
@@ -427,32 +427,38 @@
                                 <table class="table">
                                     <tr>
                                         <th style="width:50%">Totale imponibile:</th>
-                                        <td>
+                                        <td>&euro; 
                                             <?php
-                                                list ($totaleimponibile, $totalesconto) = movimentoDettaglioImportoTotaleScontoIva($_GET['idmovimento']);
-                                                print "&euro; " . $totaleimponibile;
+                                                list ($totaleimponibile, $totalesconto, $totaleiva) = movimentoDettaglioImportoTotaleScontoIva($_GET['idmovimento']);
+                                                print $totaleimponibile;
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>Totale sconto:</th>
-                                        <td>
+                                        <td>&euro; 
                                             <?php
-                                                print "&euro; " . $totalesconto;
+                                                print $totalesconto;
                                             ?>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>Totale IVA:</th>
-                                        <td>&euro; 100,00</td>
+                                        <th>IVA *:</th>
+                                        <td>&euro; 
+                                            <?php
+                                                print $totaleiva;
+                                            ?>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>Spese di spedizione:</th>
-                                        <td>&euro; 100,00</td>
+                                        <td>&euro; 
+                                            <?php echo number_format($mov_spedizione, 2). " (sconto ".number_format(($mov_spedizionesconto/100), 2)." %)" ?>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>TOTALE DA PAGARE:</th>
-                                        <td>&euro; 100,00</td>
+                                        <td>&euro; <?php $totaledapagare=$totaleimponibile+$mov_spedizione*(1-$mov_spedizionesconto/100); echo number_format($totaledapagare, 2); ?></td>
                                     </tr>
                                 </table>
                             </div>

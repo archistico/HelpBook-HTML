@@ -236,11 +236,6 @@
                                         try {
                                             include 'php/config.php';
                                             
-                                            //$dbhost = "localhost";
-                                            //$dbname = "helpbookdb";
-                                            //$dbuser = "root";
-                                            //$dbpswd = "";
-
                                             $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
                                             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                                             $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);

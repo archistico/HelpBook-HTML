@@ -198,12 +198,12 @@
                                 <div class="box-body no-padding">
                                     <table class="table table-striped">
                                         <tr>
-                                            <th style="width: 110px">Codice</th>
-                                            <th style="width: 100px">Data</th>
-                                            <th style="width: 180px">Tipologia</th>
-                                            <th style="width: 130px">Causale</th>
+                                            <th style="width: 100px">Codice</th>
+                                            <th style="width: 90px">Data</th>
+                                            <th style="width: 170px">Tipologia</th>
+                                            <th style="width: 120px">Causale</th>
                                             <th>Cliente</th>
-                                            <th style="width: 100px">Importo</th>
+                                            <th style="width: 90px">Importo</th>
                                             <th style="width: 70px">Pagata</th>
                                             <th style="width: 80px"></th>
                                         </tr>
@@ -229,22 +229,15 @@
                                     <table class="table table-striped">
                                         <tr>
                                             <th>Libro</th>
-                                            <th style="width: 100px">Venduti</th>
-                                            <th style="width: 100px">Distribuiti</th>
-                                            <th style="width: 95px">Incasso</th>
+                                            <th style="width: 80px">Venduti</th>
+                                            <th style="width: 80px">Distribuiti</th>
+                                            <th style="width: 80px">Incasso</th>
                                         </tr>
-                                        <tr>
-                                            <td>Sogni inquinati</td>
-                                            <td>100</td>
-                                            <td>150</td>
-                                            <td>€ 130,00</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Sogni inquinati</td>
-                                            <td>100</td>
-                                            <td>150</td>
-                                            <td>€ 130,00</td>
-                                        </tr>
+                                        <?php
+                                        include 'php/libri.php';
+                                        libriPiuVendutiTabella();
+                                        ?>
+                                        
                                     </table>
                                 </div>
                                 <!-- /.box-body -->

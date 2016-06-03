@@ -57,6 +57,8 @@ function movimentiListaTabella() {
                  print "<td>" . $row['denominazione'] . "</td>";
             }
             
+            print "<td>&euro; " . movimentoDettaglioImportoTotale($row['idmovimento']) . "</td>";
+                        
             if($row['pagata']) {
                 print "<td><i class = 'fa fa-fw fa-circle' style = 'color:green'></i></td>";
             } else {
@@ -68,6 +70,38 @@ function movimentiListaTabella() {
         }
         // chiude il database
         $db = NULL;
+    } catch (PDOException $e) {
+        throw new PDOException("Error  : " . $e->getMessage());
+    }
+}
+
+function movimentoDettaglioImportoTotale($idmovimento) {
+    try {
+        include 'config.php';
+        $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+        $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES UTF8');
+        
+        $totale = 0;
+        
+        $result = $db->query('SELECT libri.prezzo, movimentidettaglio.quantita, movimentidettaglio.sconto FROM movimentidettaglio INNER JOIN libri ON movimentidettaglio.fklibro = libri.idlibro WHERE libri.cancellato = 0 && movimentidettaglio.fkmovimento='.$idmovimento);
+        foreach ($result as $row) {
+            $row = get_object_vars($row);
+            $quantita = $row['quantita'];
+            $prezzo = $row['prezzo'];
+            $sconto = $row['sconto'];
+                        
+            $prezzoscontato = $prezzo *(1 - $sconto/100);
+            $subtotale = $prezzoscontato * $quantita;
+                        
+            $totale += $subtotale;
+        }
+        // chiude il database
+        $db = NULL;
+        // ritorna il valore
+        return number_format($totale, 2);
+        
     } catch (PDOException $e) {
         throw new PDOException("Error  : " . $e->getMessage());
     }

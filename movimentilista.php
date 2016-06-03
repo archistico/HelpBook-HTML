@@ -136,6 +136,7 @@
                               <th style="width: 180px">Tipologia</th>
                               <th style="width: 130px">Causale</th>
                               <th>Cliente</th>
+                              <th style="width: 110px">Importo</th>
                               <th style="width: 70px">Pagata</th>
                               <th style="width: 80px"></th>
                           </tr>

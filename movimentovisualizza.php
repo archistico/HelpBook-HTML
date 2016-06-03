@@ -102,6 +102,8 @@
 
                 <?php
                 include 'php/utilita.php';
+                include 'php/config.php';
+                include 'php/movimenti.php';
                 ?>
                 
                 <?php
@@ -170,8 +172,6 @@
 
                     if (empty($errorevisualizzazione) && empty($erroreaggiunta)) {
                         try {
-                            include 'php/config.php';
-
                             $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
                             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                             $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
@@ -207,8 +207,6 @@
 
                     if (empty($errorevisualizzazione) && empty($erroreaggiunta)) {
                         try {
-                            include 'php/config.php';
-
                             $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
                             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                             $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
@@ -249,12 +247,44 @@
 
                 <!-- Main content -->
                 <section class="invoice">
+                    
+                    
+                    
+                    <?php
+                        // Estraggo i dati del movimento
+                        list(   $mov_denominazione, $mov_indirizzo, $mov_cap, $mov_comune, $mov_telefono, $mov_email, $mov_piva, $mov_cf, 
+                                $mov_codice, $mov_anno, $mov_numero, 
+                                $mov_tipologia, $mov_causale, $mov_dataemissione, $mov_riferimento, 
+                                $mov_aspetto, $mov_trasporto, 
+                                $mov_spedizione, $mov_spedizionesconto, 
+                                $mov_pagato, $mov_datapagamento, $mov_dataentro) = movimentoDettagli($idmovimento);
+                        
+                                $mov_numero = sprintf("%03d", $mov_numero);
+                                
+                                $mov_dataemissione_o = DateTime::createFromFormat('Y-m-d', $mov_dataemissione);
+                                $mov_dataemissione_formattata = $mov_dataemissione_o->format('d/m/Y');
+                                
+                                
+                                if(empty($mov_datapagamento)) {
+                                    $mov_datapagamento_formattata = 'Non definita';
+                                } else {
+                                    $mov_datapagamento_o = DateTime::createFromFormat('Y-m-d', $mov_datapagamento);
+                                    $mov_datapagamento_formattata = $mov_datapagamento_o->format('d/m/Y');
+                                }
+                                
+                                
+                                $mov_dataentro_o = DateTime::createFromFormat('Y-m-d', $mov_dataentro);
+                                $mov_dataentro_formattata = $mov_dataentro_o->format('d/m/Y');
+                                
+                    ?>
+                    
+                                        
+                    
                     <!-- title row -->
                     <div class="row">
                         <div class="col-xs-12">
                             <h2 class="page-header">
                                 <i class="fa fa-book"></i> Elmi's World - Casa Editrice
-                                <p class="pull-right badge bg-orange">2016-FE-2015</p>
                             </h2>
                         </div>
                         <!-- /.col -->
@@ -276,26 +306,26 @@
                         <!-- /.col -->
                         <div class="col-sm-4 invoice-col">
                             Destinatario:
-                            <h2>5Rue Maillet s.a.s.</h2>
+                            <h2><?php echo $mov_denominazione; ?></h2>
                             <address>
-                                via Guillet, 6<br>
-                                11027 Saint Vincent<br>
-                                Tel: 388 92 07 016<br>
-                                Email: info@elmisworld.it<br>
-                                P.IVA: 011 463 700 75<br>
-                                C.F.: GRP LTR 82P47 Z126 I
+                                <?php echo $mov_indirizzo; ?><br>
+                                <?php echo $mov_cap. " ". $mov_comune; ?><br>
+                                Tel: <?php echo $mov_telefono; ?><br>
+                                Email: <?php echo $mov_email; ?><br>
+                                P.IVA: <?php echo $mov_piva; ?><br>
+                                C.F.: <?php echo $mov_cf; ?>
                             </address>
                         </div>
                         <!-- /.col -->
                         <div class="col-sm-4 invoice-col">
                             Documento:
-                            <h2>2016-FI-001</h2>
-                            <b>Tipologia:</b> Fattura immediata<br>
-                            <b>Causale:</b> Vendita<br>
-                            <b>Data emissione:</b> 01/01/2016<br>
-                            <b>Riferimento:</b> ORD. 2016/1564<br>
-                            <b>Aspetto:</b> Busta<br>
-                            <b>Trasporto:</b> Vettore Poste Italiane
+                            <h2><?php echo $mov_anno."-".$mov_codice."-".$mov_numero; ?></h2>
+                            <b>Tipologia:</b> <?php echo $mov_tipologia; ?><br>
+                            <b>Causale:</b> <?php echo $mov_causale; ?><br>
+                            <b>Data emissione:</b> <?php echo $mov_dataemissione_formattata; ?><br>
+                            <b>Riferimento:</b> <?php echo $mov_riferimento; ?><br>
+                            <b>Aspetto:</b> <?php echo $mov_aspetto; ?><br>
+                            <b>Trasporto:</b> <?php echo $mov_trasporto; ?>
                         </div>
                         <!-- /.col -->
                     </div>
@@ -376,7 +406,7 @@
 
                     <div class="row">
                         <!-- accepted payments column -->
-                        <div class="col-xs-6">
+                        <div class="col-xs-8">
                             <p class="lead">Pagamento:</p>
 
 
@@ -389,25 +419,39 @@
                             </p>
                         </div>
                         <!-- /.col -->
-                        <div class="col-xs-6">
+                        
+                        <div class="col-xs-4">
                             <p class="lead">Da pagare entro: 01/01/2016</p>
 
                             <div class="table-responsive">
                                 <table class="table">
                                     <tr>
                                         <th style="width:50%">Totale imponibile:</th>
-                                        <td>&euro; 100,00</td>
+                                        <td>
+                                            <?php
+                                                list ($totaleimponibile, $totalesconto) = movimentoDettaglioImportoTotaleScontoIva($_GET['idmovimento']);
+                                                print "&euro; " . $totaleimponibile;
+                                            ?>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <th>Sconto:</th>
-                                        <td>&euro; 100,00</td>
+                                        <th>Totale sconto:</th>
+                                        <td>
+                                            <?php
+                                                print "&euro; " . $totalesconto;
+                                            ?>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>Totale IVA:</th>
                                         <td>&euro; 100,00</td>
                                     </tr>
                                     <tr>
-                                        <th>TOTALE SCONTATO:</th>
+                                        <th>Spese di spedizione:</th>
+                                        <td>&euro; 100,00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>TOTALE DA PAGARE:</th>
                                         <td>&euro; 100,00</td>
                                     </tr>
                                 </table>
@@ -420,9 +464,15 @@
                     <!-- this row will not appear when printing -->
                     <div class="row no-print">
                         <div class="col-xs-12">
-                            <a href="" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Stampa</a>
+                            <a target="_blank" class="btn btn-default"><i class="fa fa-print"></i> STAMPA</a>
                             <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
                                 <i class="fa fa-download"></i> CREA PDF
+                            </button>
+                            <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
+                                <i class="fa fa-download"></i> INVIA EMAIL MITTENTE
+                            </button>
+                            <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
+                                <i class="fa fa-download"></i> INVIA EMAIL DESTINATARIO
                             </button>
                         </div>
                     </div>

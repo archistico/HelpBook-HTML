@@ -75,15 +75,17 @@ function movimentiListaTabella() {
     }
 }
 
-function movimentoDettaglioImportoTotale($idmovimento) {
+function movimentoDettaglioImportoTotaleScontoIva($idmovimento) {
     try {
         include 'config.php';
+        include 'iva.php';
         $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
         $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES UTF8');
         
         $totale = 0;
+        $totalesconto = 0;
         
         $result = $db->query('SELECT libri.prezzo, movimentidettaglio.quantita, movimentidettaglio.sconto FROM movimentidettaglio INNER JOIN libri ON movimentidettaglio.fklibro = libri.idlibro WHERE libri.cancellato = 0 && movimentidettaglio.fkmovimento='.$idmovimento);
         foreach ($result as $row) {
@@ -94,13 +96,119 @@ function movimentoDettaglioImportoTotale($idmovimento) {
                         
             $prezzoscontato = $prezzo *(1 - $sconto/100);
             $subtotale = $prezzoscontato * $quantita;
-                        
+            $subsconto = ($prezzo-$prezzoscontato)*$quantita;
+            
+            //$aliquota = trovaIVA($tipologia, $data);
+            
             $totale += $subtotale;
+            $totalesconto += $subsconto;
+        }
+        // chiude il database
+        $db = NULL;
+        // ritorna il valore
+        return array(number_format($totale, 2), number_format($totalesconto, 2));
+        
+    } catch (PDOException $e) {
+        throw new PDOException("Error  : " . $e->getMessage());
+    }
+}
+
+function movimentoDettaglioImportoTotale($idmovimento) {
+    try {
+        include 'config.php';
+        $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+        $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES UTF8');
+        
+        $totale = 0;
+                
+        $result = $db->query('SELECT libri.prezzo, movimentidettaglio.quantita, movimentidettaglio.sconto FROM movimentidettaglio INNER JOIN libri ON movimentidettaglio.fklibro = libri.idlibro WHERE libri.cancellato = 0 && movimentidettaglio.fkmovimento='.$idmovimento);
+        foreach ($result as $row) {
+            $row = get_object_vars($row);
+            $quantita = $row['quantita'];
+            $prezzo = $row['prezzo'];
+            $sconto = $row['sconto'];
+                        
+            $prezzoscontato = $prezzo *(1 - $sconto/100);
+            $subtotale = $prezzoscontato * $quantita;
+            $subsconto = ($prezzo-$prezzoscontato)*$quantita;
+            
+            $totale += $subtotale;
+            
         }
         // chiude il database
         $db = NULL;
         // ritorna il valore
         return number_format($totale, 2);
+        
+    } catch (PDOException $e) {
+        throw new PDOException("Error  : " . $e->getMessage());
+    }
+}
+
+
+function movimentoDettagli($idmovimento) {
+    try {
+        include 'config.php';
+        $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
+        $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+        $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES UTF8');
+
+        $result = $db->query('SELECT soggetti.denominazione, soggetti.indirizzo, soggetti.cap, soggetti.comune, soggetti.telefono, soggetti.email, soggetti.piva, soggetti.codicefiscale, '
+                . 'movimentitipologia.movimentotipologia, movimentitipologia.codice, '
+                . 'movimenti.anno, movimenti.numero, movimenti.movimentodata, movimenti.pagamentoentro, movimenti.pagata, movimenti.datapagamento, movimenti.spedizionecosto, movimenti.spedizionesconto, movimenti.riferimento,  '
+                . 'movimenticausale.movimentocausale, '
+                . 'movimentiaspetto.movimentoaspetto, '
+                . 'movimentitrasporto.movimentotrasporto '
+                . 'FROM movimenti '
+                . 'INNER JOIN movimentitipologia ON movimenti.fktipologia=movimentitipologia.idmovimentotipologia '
+                . 'INNER JOIN movimentiaspetto ON movimenti.fkaspetto=movimentiaspetto.idmovimentoaspetto '
+                . 'INNER JOIN movimentitrasporto ON movimenti.fktrasporto=movimentitrasporto.idmovimentotrasporto '
+                . 'INNER JOIN soggetti ON movimenti.fksoggetto=soggetti.idsoggetto '
+                . 'INNER JOIN pagamentitipologia ON movimenti.fkpagamentotipologia=pagamentitipologia.idpagamentotipologia '
+                . 'INNER JOIN movimenticausale ON movimenti.fkcausale=movimenticausale.idmovimentocausale '
+                . 'WHERE movimenti.cancellato=0 AND movimenti.idmovimento='.$idmovimento);
+        foreach ($result as $row) {
+            $row = get_object_vars($row);
+            
+            //$movimentodata = DateTime::createFromFormat('Y-m-d', $row['movimentodata']);
+            //print "<td>" . $movimentodata->format('d/m/Y') . "</td>";
+            //print "<td>" . $row['movimentotipologia'] . "</td>";
+            
+            $mov_denominazione = $row['denominazione'];
+            $mov_indirizzo = $row['indirizzo'];
+            $mov_cap = $row['cap'];
+            $mov_comune = $row['comune'];
+            $mov_telefono = $row['telefono'];
+            $mov_email = $row['email'];
+            $mov_piva = $row['piva'];
+            $mov_cf = $row['codicefiscale'];
+            $mov_codice = $row['codice'];
+            $mov_anno = $row['anno'];
+            $mov_numero = $row['numero'];
+            $mov_tipologia = $row['movimentotipologia'];
+            $mov_causale = $row['movimentocausale'];
+            $mov_dataemissione = $row['movimentodata'];
+            $mov_riferimento = $row['riferimento'];
+            $mov_aspetto = $row['movimentoaspetto'];
+            $mov_trasporto = $row['movimentotrasporto'];
+            $mov_spedizione = $row['spedizionecosto'];
+            $mov_spedizionesconto = $row['spedizionesconto'];
+            $mov_pagato = $row['pagata'];
+            $mov_datapagamento = $row['datapagamento'];
+            $mov_dataentro = $row['pagamentoentro'];
+        }
+        // chiude il database
+        $db = NULL;
+        
+        return array($mov_denominazione, $mov_indirizzo, $mov_cap, $mov_comune, $mov_telefono, $mov_email, $mov_piva, $mov_cf, 
+               $mov_codice, $mov_anno, $mov_numero, 
+               $mov_tipologia, $mov_causale, $mov_dataemissione, $mov_riferimento, 
+               $mov_aspetto, $mov_trasporto, 
+               $mov_spedizione, $mov_spedizionesconto, 
+               $mov_pagato, $mov_datapagamento, $mov_dataentro);
         
     } catch (PDOException $e) {
         throw new PDOException("Error  : " . $e->getMessage());

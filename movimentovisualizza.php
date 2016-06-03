@@ -112,13 +112,130 @@
                 define('CHARSET', 'UTF-8');
                 define('REPLACE_FLAGS', ENT_COMPAT | ENT_XHTML);
                 
-                $errors = array();
+                $errorevisualizzazione = array();
+                $erroreaggiunta = array();
+                $errorecancella = array();
                 
+                abstract class tipoOperazione
+                {
+                    const nondefinita = 0;
+                    const visualizza = 1;
+                    const aggiungi = 2;
+                    const cancella = 3;
+                }
+                
+                $TipoOperazione = tipoOperazione::nondefinita;
+                
+                // Definisci il tipo di operazione
+                if(isset($_GET['idmovimento']) && !(isset($_GET['idlibro']) && isset($_GET['quantita']) && isset($_GET['sconto'])) && !(isset($_GET['idmovimentodettaglio']))) {
+                    $TipoOperazione = tipoOperazione::visualizza;
+                }
+                
+                if((isset($_GET['idmovimento']) && isset($_GET['idlibro']) && isset($_GET['quantita']) && isset($_GET['sconto'])) && !(isset($_GET['idmovimentodettaglio']))) {
+                    $TipoOperazione = tipoOperazione::aggiungi;
+                }
+                
+                if(isset($_GET['idmovimento']) && !(isset($_GET['idlibro']) && isset($_GET['quantita']) && isset($_GET['sconto'])) && (isset($_GET['idmovimentodettaglio']))) {
+                    $TipoOperazione = tipoOperazione::cancella;
+                }
+                
+                // Carica le variabili
                 if (!isset($_GET['idmovimento'])) {
-                    $errors['idmovimento'] = 'ID movimento';
+                    $errorevisualizzazione['idmovimento'] = 'ID movimento';
                 } else {
                     $idmovimento = $_GET['idmovimento'];
                 }
+                
+                // SE AGGIUNGO
+                if($TipoOperazione == tipoOperazione::aggiungi)
+                {
+                    if (empty($_GET['quantita']) || $_GET['quantita']==0 ) {
+                        $erroreaggiunta['quantita'] = 'quantita';
+                    } else {
+                        $quantita = $_GET['quantita'];
+                    }
+
+                    if (!isset($_GET['idlibro'])) {
+                        $erroreaggiunta['idlibro'] = 'ID libro';
+                    } else {
+                        $idlibro = $_GET['idlibro'];
+                    }
+
+                    if (!isset($_GET['sconto'])) {
+                        $erroreaggiunta['sconto'] = 'sconto';
+                    } else {
+                        $sconto = $_GET['sconto'];
+                    }
+
+                    if(!empty($erroreaggiunta)) {
+                        print "<div class='pad margin no-print'><div class='callout callout-danger' style='margin-bottom: 0!important;'><h4><i class='fa fa-ban'></i> Note:</h4>Errori ".implode(", ", $erroreaggiunta)."</div></div>";
+                    }
+
+                    if (empty($errorevisualizzazione) && empty($erroreaggiunta)) {
+                        try {
+                            include 'php/config.php';
+
+                            $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
+                            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+                            $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+                            $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES UTF8');
+
+                            date_default_timezone_set('Europe/Rome');
+
+                            $db->exec("INSERT INTO helpbookdb.movimentidettaglio (idmovimentodettaglio, fkmovimento, fklibro, quantita, sconto, cancellato) VALUES (NULL, '".$idmovimento."', '".$idlibro."', '".$quantita."', '".$sconto."', '0');");
+
+                            // chiude il database
+                            $db = NULL;
+                            print "<div class='pad margin no-print'><div class='callout callout-success' style='margin-bottom: 0!important;'><h4><i class='fa fa-check'></i> Note:</h4>Aggiunto</div></div>";
+
+                        } catch (PDOException $e) {
+                            print "<div class='pad margin no-print'><div class='callout callout-danger' style='margin-bottom: 0!important;'><h4><i class='fa fa-ban'></i> Note:</h4>Errore con il database</div></div>";
+                        }
+                    }
+                }
+                
+                
+                // SE CANCELLO
+                if($TipoOperazione == tipoOperazione::cancella)
+                {
+                    if (!isset($_GET['idmovimentodettaglio'])) {
+                        $errorecancella['idmovimentodettaglio'] = 'idmovimentodettaglio';
+                    } else {
+                        $idmovimentodettaglio = $_GET['idmovimentodettaglio'];
+                    }
+
+                    if(!empty($errorecancella)) {
+                        print "<div class='pad margin no-print'><div class='callout callout-danger' style='margin-bottom: 0!important;'><h4><i class='fa fa-ban'></i> Note:</h4>Errori ".implode(", ", $errorecancella)."</div></div>";
+                    }
+
+                    if (empty($errorevisualizzazione) && empty($erroreaggiunta)) {
+                        try {
+                            include 'php/config.php';
+
+                            $db = new PDO("mysql:host=" . $dbhost . ";dbname=" . $dbname, $dbuser, $dbpswd);
+                            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+                            $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+                            $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES UTF8');
+
+                            date_default_timezone_set('Europe/Rome');
+
+                            $db->exec("DELETE FROM helpbookdb.movimentidettaglio WHERE movimentidettaglio.idmovimentodettaglio = ".$idmovimentodettaglio.";");
+
+                            // chiude il database
+                            $db = NULL;
+                            print "<div class='pad margin no-print'><div class='callout callout-success' style='margin-bottom: 0!important;'><h4><i class='fa fa-check'></i> Note:</h4>Eliminato</div></div>";
+
+                        } catch (PDOException $e) {
+                            print "<div class='pad margin no-print'><div class='callout callout-danger' style='margin-bottom: 0!important;'><h4><i class='fa fa-ban'></i> Note:</h4>Errore con il database</div></div>";
+                        }
+                    }
+                }
+                
+                // SE NON SO COSA FARE
+                if($TipoOperazione == tipoOperazione::nondefinita){
+                    print "<div class='pad margin no-print'><div class='callout callout-danger' style='margin-bottom: 0!important;'><h4><i class='fa fa-ban'></i> Note:</h4>Operazione non definita</div></div>";
+                }
+                   
                 ?>
 
                 <section class="content-header">
@@ -220,6 +337,9 @@
                         <!-- /.col -->
                     </div>
                     <!-- /.row -->
+                    
+                    
+                    
                     <form role="form" name="movimentoForm" action="movimentovisualizza.php" method="get">
                         <div class="row">
                             <div class="col-md-2">
@@ -231,7 +351,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Libro</label>
-                                    <select class="form-control select2" style="width: 100%;" name='opera' required>
+                                    <select class="form-control select2" style="width: 100%;" name='idlibro' required>
                                         <?php
                                         include 'php/libri.php';
                                         libriSelect();
@@ -248,8 +368,9 @@
 
                             <div class="col-md-2">
                                 <div class="form-group">
+                                    <input type="hidden" name="idmovimento" value="<?php echo $_GET['idmovimento']; ?>">
                                     <label>Aggiungi nuovo libro al movimento</label>
-                                    <button type="button" class="btn btn-primary btn-block" style="margin-right: 5px;">
+                                    <button type="submit" class="btn btn-primary btn-block" style="margin-right: 5px;">
                                         <i class="fa fa-download"></i> AGGIUNGI
                                     </button>
                                 </div>
@@ -257,6 +378,10 @@
                             <!-- /.col -->
                         </div>
                     </form>
+                    
+                    
+                    
+                    
 
                     <div class="row">
                         <!-- accepted payments column -->

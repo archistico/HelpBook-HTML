@@ -1,8 +1,10 @@
 <?php
 
-include 'utilita.php';
-
-VenditeSuddiviseAnni();
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
 function VenditeSuddiviseAnni() {
     try {
@@ -14,7 +16,7 @@ function VenditeSuddiviseAnni() {
 
         $suddivisione = array();
 
-        $result = $db->query('SELECT libri.prezzo, libritipologia.librotipologia, movimenti.anno, movimentitipologia.codice, movimentidettaglio.quantita, movimentidettaglio.sconto FROM movimentidettaglio INNER JOIN movimenti ON movimentidettaglio.fkmovimento = movimenti.idmovimento INNER JOIN libri ON libri.idlibro = movimentidettaglio.fklibro INNER JOIN libritipologia ON libri.fktipologia = libritipologia.idlibrotipologia INNER JOIN movimentitipologia ON movimenti.fktipologia = movimentitipologia.idmovimentotipologia WHERE movimentidettaglio.cancellato = 0 AND libri.cancellato = 0 AND movimenti.cancellato = 0 ORDER BY libri.titolo ASC, libritipologia.librotipologia ASC;');
+        $result = $db->query('SELECT libri.prezzo, libritipologia.librotipologia, movimenti.anno, movimentitipologia.codice, movimentidettaglio.quantita, movimentidettaglio.sconto FROM movimentidettaglio INNER JOIN movimenti ON movimentidettaglio.fkmovimento = movimenti.idmovimento INNER JOIN libri ON libri.idlibro = movimentidettaglio.fklibro INNER JOIN libritipologia ON libri.fktipologia = libritipologia.idlibrotipologia INNER JOIN movimentitipologia ON movimenti.fktipologia = movimentitipologia.idmovimentotipologia WHERE movimentidettaglio.cancellato = 0 AND libri.cancellato = 0 AND movimenti.cancellato = 0 ORDER BY movimenti.anno ASC;');
         foreach ($result as $row) {
             $row = get_object_vars($row);
 

@@ -43,17 +43,17 @@ function libriPiuVendutiTabella() {
         foreach ($result as $row) {
             $row = get_object_vars($row);
                         
-            if(!isset($conteggio[$row['titolo']]))
+            if(!isset($conteggio[$row['titolo'].$row['librotipologia']]))
             {
-                $conteggio[$row['titolo']] = new OperaConteggio();
-                $conteggio[$row['titolo']]->titolo = $row['titolo'];
-                $conteggio[$row['titolo']]->venduti += 0;
-                $conteggio[$row['titolo']]->contodeposito += 0;
-                $conteggio[$row['titolo']]->montantevenduto += 0;
-                $conteggio[$row['titolo']]->titolotipo = $row['librotipologia'];
+                $conteggio[$row['titolo'].$row['librotipologia']] = new OperaConteggio();
+                $conteggio[$row['titolo'].$row['librotipologia']]->titolo = $row['titolo'];
+                $conteggio[$row['titolo'].$row['librotipologia']]->venduti += 0;
+                $conteggio[$row['titolo'].$row['librotipologia']]->contodeposito += 0;
+                $conteggio[$row['titolo'].$row['librotipologia']]->montantevenduto += 0;
+                $conteggio[$row['titolo'].$row['librotipologia']]->titolotipo = $row['librotipologia'];
             }
             if($row['codice']=='FA' || $row['codice']=='FD' || $row['codice']=='FI' || $row['codice']=='RI'){
-                $conteggio[$row['titolo']]->venduti += $row['quantita'];
+                $conteggio[$row['titolo'].$row['librotipologia']]->venduti += $row['quantita'];
                 
                 $prezzo = $row['prezzo'];
                 $quantita = $row['quantita'];
@@ -62,10 +62,10 @@ function libriPiuVendutiTabella() {
                 $totale = $prezzo * $quantita * $sconto;
                 $totale = round($totale * 100) / 100;
                 
-                $conteggio[$row['titolo']]->montantevenduto += $totale;
+                $conteggio[$row['titolo'].$row['librotipologia']]->montantevenduto += $totale;
             }
             if ($row['codice'] == 'DT') {
-                $conteggio[$row['titolo']]->contodeposito += $row['quantita'];
+                $conteggio[$row['titolo'].$row['librotipologia']]->contodeposito += $row['quantita'];
             }
         }
         
@@ -78,7 +78,7 @@ function libriPiuVendutiTabella() {
                 } else {
                     print "<td>" . $row->contodeposito . "</td>";
                 }
-                print "<td>&euro; " . $row->montantevenduto . "</td>";
+                print "<td>&euro; " . number_format($row->montantevenduto, 2) . "</td>";
                 print "</tr>";
             }
         // chiude il database

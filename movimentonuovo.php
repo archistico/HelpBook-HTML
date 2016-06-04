@@ -371,12 +371,8 @@
 
         <?php include 'script.php'; ?>
 
-        <!-- ChartJS 1.0.1 -->
-        <script src="plugins/chartjs/Chart.min.js"></script>
         <script>
             $(function () {
-                //Initialize Select2 Elements
-                $(".select2").select2();
 
                  //Date picker
                 $('#datepicker1').datepicker({
